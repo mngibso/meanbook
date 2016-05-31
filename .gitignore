@@ -1,5 +1,6 @@
 .idea
 node_modules
 .bower-cache
+.bower-registry
 bower_components
 .npm
