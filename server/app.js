@@ -8,7 +8,12 @@ var bodyParser = require('body-parser');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+var mongoose = require('mongoose');
+require('./models/Posts');
+require('./models/Comments');
+
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -21,7 +26,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 //app.use(express.static(path.join(__dirname, 'public')));
-//Refer to public outside of current directory
+
+//Refer to public outside of current 'server' directory
 app.use(express.static(path.normalize( path.join(__dirname, '../public'))));
 
 app.use('/', routes);
@@ -58,5 +64,18 @@ app.use(function(err, req, res, next) {
   });
 });
 
+//Connect to mongoDb
+  mongoose.connect(process.env.MongoURI, function(err) {
+    if(err) {
+      console.warn('Could not connect to database: ' + process.env.MongoURI);
+      console.warn(err);
+      throw err;
+    }
+  });
+
+//Acknowledge successful connection
+mongoose.connection.on('connected', function () {
+  console.log('Database connected: ' + process.env.MongoURI );
+});
 
 module.exports = app;
